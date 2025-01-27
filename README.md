@@ -39,7 +39,7 @@ https://santhospital.com
 
 1. Clone the repository:
    ```bash
-   git clone https://github.com/junaid77khan/junaid77khan-Hospital-Management-System.git
+   git clone https://github.com/junaid77khan/Hostpital-Management-System.git
    ```
 2. Navigate to rbac-frontend folder:
    ```bash
