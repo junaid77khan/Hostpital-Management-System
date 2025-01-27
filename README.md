@@ -1,11 +1,10 @@
 # Hospital Management System
 
-This is a **Hospital Management System** application built with a **Node.js** backend and a **React** frontend. The system allows managing patients, doctors, and appointments while tracking recent activities and maintaining detailed records.
+This is a **Hospital Management System** application built with a **PHP** backend and a **React** frontend. The system allows managing patients, doctors, and appointments while maintaining detailed records. It can handle online as well as offline appointments.
 
-## Note For Testing
-### Email - admin@gmail.com
-### Password - 12345678
-### Deployed Link - https://junaid77khan-hospital-management-system.vercel.app
+## Hospital Website Link
+Visit our live hospital management system to book appointments with doctors, view available services, and more:
+https://santhospital.com
 
 ---
 
@@ -13,8 +12,6 @@ This is a **Hospital Management System** application built with a **Node.js** ba
 - [Features](#features)
 - [Images](#images)
 - [Installation](#installation)
-  - [Backend Setup](#backend-setup)
-  - [Frontend Setup](#frontend-setup)
 - [Usage](#usage)
 - [Technologies Used](#technologies-used)
 - [License](#license)
@@ -23,115 +20,66 @@ This is a **Hospital Management System** application built with a **Node.js** ba
 - **Patient Management**: Add, update, and delete patient records.
 - **Doctor Management**: Assign and manage doctor profiles and specializations.
 - **Appointment Scheduling**: Create, view, and manage patient appointments with doctors.
-- **Track Activity**: Monitor recent activity and updates in the system.
-- **Role-based Authentication**: Protect endpoints based on roles like `Admin`, `Doctor`, and `Receptionist`.
 
 ## Images
 
-![image](https://github.com/user-attachments/assets/68ce178d-cb59-4399-abb3-288efdbe8319)
+![image](https://github.com/user-attachments/assets/e27b57ab-3c76-4b73-957d-a4ef66c16db3)
 
-![image](https://github.com/user-attachments/assets/e6e69f69-e49f-4a74-bce6-dd2fcf5ffc5f)
+![image](https://github.com/user-attachments/assets/df354797-6c02-456a-ae63-c935a182bfba)
 
-![image](https://github.com/user-attachments/assets/9c726175-c686-40b1-8752-789ec1975194)
+![image](https://github.com/user-attachments/assets/da4ef61b-f2ac-4f99-b494-6d1bb64124e9)
+
+![image](https://github.com/user-attachments/assets/7ef28783-2be8-482a-90dc-c2a9c8949a3e)
+
+![image](https://github.com/user-attachments/assets/18987405-7e0d-436a-a2d3-67f41bc78c7e)
+
+![image](https://github.com/user-attachments/assets/8b8d88a1-8f5c-4818-a6e7-82bf0c5eec54)
 
 ## Installation
 
-Clone the repository:
+1. Clone the repository:
    ```bash
    git clone https://github.com/junaid77khan/junaid77khan-Hospital-Management-System.git
    ```
-
-### Backend Setup
-To set up the backend (API server), follow these steps:
-
-1. Go to Backend Directory:
+2. Navigate to rbac-frontend folder:
    ```bash
-   cd hospital-backend
-   ```
-
-2. Install dependencies:
+    cd rbac-frontend
+    ```
+3. Install dependencies:
     ```bash
     npm install
     ```
 
-3. Set up environment variables:
+4. Set up environment variables:
 
    Create a .env file in the root of the project and add the following:
    ```bash
-   PORT=5000
-   MONGO_URI=<your-mongodb-uri>
-   JWT_SECRET=<your-secret-key>
+   REACT_APP_API_URL=(API for handling patients, appointments and all other things)
+   REACT_APP_HOSPITAL_NAME=YOUR_HOSPITAL_NAME
    ```
 
-4. Start the backend server:
+5. Start the Frontend:
 
    You can start the server using:
     ```bash
-    npm run server
+    npm run start
     ```
-
-### Frontend Setup
-To set up the frontend, follow these steps:
-
-1. Go to Frontend Directory:
-   ```bash
-   cd hospital-frontend
-   ```
-
-2. Install dependencies:
-    ```bash
-    npm install
-    ```
-
-3. Set up environment variables:
-
-   Create a .env file in the root of the project and add the following:
-   ```bash
-   REACT_APP_API_URL=http://localhost:5000
-   ```
-
-4. Start the frontend server:
-
-   You can start using:
-   ```bash
-   npm start
-   ```
 
 This will run the frontend on http://localhost:3000.
 
 ## Usage
-Once both the frontend and backend servers are up and running, navigate to http://localhost:3000 to access the Hospital Management System.
-
-### API Endpoints:
-- GET /patients: Get all patients.
-- GET /doctors: Get all doctors.
-- POST /login: User login (JWT authentication).
-- POST /register: Register a new user (Admin only).
-- POST /appointments: Schedule a new appointment.
+Once the frontend are up and running, navigate to http://localhost:3000 to access the Hospital Management System.
 
 ### Technologies Used
 #### Backend:
-- Node.js with Express
-- MongoDB with Mongoose
-- JWT for Authentication
-- bcryptjs for password hashing
-- dotenv for environment variable management
+- PHP with SQL Server
 
 #### Frontend:
 - React.js
-- Axios for API requests
+- Fetch for API requests
 - Tailwind CSS for custom styling
 - React Router for navigation
 
 ## License
 This project is licensed under the ISC License.
-
-### Explanation:
-- **Project Description**: The initial description explains what your project does (Hospital Management System).
-- **Table of Contents**: Helps users quickly navigate to relevant sections.
-- **Features**: Highlights the core functionalities of your Hospital Management System.
-- **Installation**: Provides step-by-step instructions to set up the backend and frontend.
-- **Usage**: Explains how to run the application and access it in the browser.
-- **Technologies Used**: Lists the key technologies used in both the backend and frontend.
-- **License**: Standard licensing information (adjust if you use a different license).
 
