@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import fetchData from "../utils/fetchData";
+import { useNavigate } from "react-router-dom";
 
 const PatientDetail = ({ appointment_details }) => {
   const [patientDetails, setPatientDetails] = useState({});
@@ -8,7 +9,7 @@ const PatientDetail = ({ appointment_details }) => {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [selectedAppointmentImage, setSelectedAppointmentImage] = useState(null);
-
+  const navigate = useNavigate();
   useEffect(() => {
     fetchPatientData();
     fetchPatientLastAppo();
@@ -66,14 +67,19 @@ const PatientDetail = ({ appointment_details }) => {
     setLoading(true);
     try {
       const result = await fetchData({
-        API_URL: `report/fetch_report.php?af_id=${af_id}&date=${date}`,
-      });
-
-      if (result.error) {
+        API_URL: `Appointments/get_app_by_id.php?af_id=${af_id}&date=${date}`,
+    });
+    let appointment_details;
+    if (result.error) {
         setError(result.error);
-      } else {
-        setSelectedAppointmentImage(result.report.image_data);
-      }
+    } else {   
+      appointment_details = result.appointment;
+      navigate(`/admin/doctor_panel/precibsion/${appointment_details.af_id}`, {
+          state: {
+            appointment_details,
+          },
+      })
+    }
     } catch {
       setError('Failed to fetch report image');
     } finally {

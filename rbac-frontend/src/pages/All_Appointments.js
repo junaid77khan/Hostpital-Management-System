@@ -80,7 +80,7 @@ const All_Appointments = () => {
     };
 
     const handleView = (appointment) => {
-        navigate("/admin/doctor_panel/precibsion", {
+        navigate(`/admin/doctor_panel/precibsion/${appointment.af_id}`, {
             state: {
               appointment_details: appointment,
             },

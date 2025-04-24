@@ -80,9 +80,8 @@ const Todays_Appointments = () => {
     };
 
     const handleView = (data) => {
-        console.log(data);
         
-        navigate("/admin/doctor_panel/precibsion", {
+        navigate("/admin/doctor_panel/precibsion/${data.af_id}", {
             state: {
               appointment_details: data,
             },

@@ -24,6 +24,8 @@ import Online_Patient_Appointments from './pages/Online_Patient_Appointment';
 import OnlinePatientAppointEdit from './pages/OnlinePatientAppointEdit';
 import Structure from './pages/Structure';
 import ChangePassword from './pages/ChangePassword';
+import Report from './pages/Report';
+import MedicineDosesUnits from './pages/MedicineDosesUnits';
 
 const items = [
     {
@@ -96,6 +98,14 @@ function App() {
           element={
             <PrivateRoute>
               <PatientAppointmentEdit />
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/admin/doctor_panel/settings/units" 
+          element={
+            <PrivateRoute>
+              <MedicineDosesUnits />
             </PrivateRoute>
           } 
         />
@@ -177,10 +187,18 @@ function App() {
           } 
         />
         <Route 
-          path="/admin/doctor_panel/precibsion" 
+          path="/admin/doctor_panel/precibsion/:af_id" 
           element={
             <PrivateRoute>
               <PrecisionComponent />
+            </PrivateRoute>
+          } 
+        />
+        <Route 
+          path="/admin/doctor_panel/report" 
+          element={
+            <PrivateRoute>
+              <Report />
             </PrivateRoute>
           } 
         />

@@ -2,39 +2,36 @@ import React, { useState, useEffect, useRef } from 'react';
 import { Edit as EditIcon, Delete as DeleteIcon } from '@mui/icons-material';
 import Navbar from '../components/Navbar';
 import Sidebar from '../components/Sidebar';
-import axios from 'axios';
-import Loader from '../components/Loader';
 import fetchData from '../utils/fetchData';
-import { useNavigate } from 'react-router-dom';
+import Loader from '../components/Loader';
 
-const Template = () => {
-    const [preTemplates, setPreTemplates] = useState([]);
+const MedicineDosesUnits = () => {
+    const [dosesUnits, setDosesUnits] = useState([]);
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(10);
     const [search, setSearch] = useState('');
     const [debouncedSearch, setDebouncedSearch] = useState('');
     const [form, setForm] = useState({
-        name: '',
-        t_id: ''
+        unit: '',
+        du_id: ""
     });
     const [loading, setLoading] = useState(false);
     const [showModal, setShowModal] = useState(false);
     const [error, setError] = useState('');
-    const [editingTemplate, setEditingTemplate] = useState(false);
+    const [editingDosesUnit, setEditingDosesUnit] = useState(false);
     const [totalPages, setTotalPages] = useState(1);
 
     const debounceTimeout = useRef(null);
-    const navigate = useNavigate();
 
     useEffect(() => {
-        fetchPreTemplates();
+        fetchDosesUnits();
     }, [page, limit, debouncedSearch]);
 
-    const fetchPreTemplates = async () => {
+    const fetchDosesUnits = async () => {
         setLoading(true);
         try {
             const result = await fetchData({
-                API_URL: 'pre-template.php',
+                API_URL: 'Medicines/Get_Medicine_Doses_Units.php',
                 Page_Number: page,
                 Limit: limit,
                 Search_Term: debouncedSearch,
@@ -43,11 +40,11 @@ const Template = () => {
             if (result.error) {
                 setError(result.error);
             } else {
-                setPreTemplates(result.template_suggestions || []);
-                setTotalPages(result.pages);
+                setDosesUnits(result.doses_units || []);
+                setTotalPages(result.pages); 
             }
         } catch (err) {
-            setError('Failed to fetch pre-template data');
+            setError('Failed to fetch doses units');
         } finally {
             setLoading(false);
         }
@@ -58,7 +55,7 @@ const Template = () => {
         setSearch(value);
 
         if (debounceTimeout.current) {
-            clearTimeout(debounceTimeout.current);
+            clearTimeout(debounceTimeout.current); 
         }
 
         debounceTimeout.current = setTimeout(() => {
@@ -72,14 +69,23 @@ const Template = () => {
 
     const handleChange = (e) => setForm({ ...form, [e.target.name]: e.target.value });
 
-    const openModal = () => {
+    const openModal = (dosesUnit = null) => {
+        if (dosesUnit) {
+            setEditingDosesUnit(true);
+            setForm(dosesUnit); // Populate form with selected data
+        } else {
+            setEditingDosesUnit(false);
+            resetForm(); // Clear the form for adding a new doses unit
+        }
         setShowModal(true);
     };
-
+    
     const closeModal = () => {
-        setShowModal(false);
+        resetForm(); 
+        setEditingDosesUnit(false); 
+        setShowModal(false); 
     };
-
+    
     const handlePageChange = (newPage) => {
         if (newPage > 0 && newPage <= totalPages) {
             setPage(newPage);
@@ -102,122 +108,95 @@ const Template = () => {
         return pages;
     };
 
-    const handleAddORUpdateTemplate = async () => {
+    const handleAddOrUpdateDosesUnit = async () => {
         setLoading(true);
-        setEditingTemplate(false);
         try {
-            if(editingTemplate) {
+            if(editingDosesUnit) {
                 const data = {
-                    t_id: form.t_id,
-                    name: form.name,
+                    du_id: form.du_id,
+                    unit: form.unit,
                     limit,
                     page
                 };
-                const response = await fetch(`${process.env.REACT_APP_API_URL}/templates/update_template.php`, {
+                
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/Medicines/update_medicine_doses_unit.php`, {
                     method: 'POST', 
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify(data)
-                  });
+                });
               
-                  const result = await response.json();
+                const result = await response.json();
               
-                  if (response.ok) {
-                      setPreTemplates(result.updated_templates)
-                      setShowModal(false);
-                      setEditingTemplate(false);
-                      resetForm();
-                  } else {
-                      throw new Error(result.error || 'Unknown error occurred');
-                  }
+                if (response.ok) {
+                    setDosesUnits(result.updated_units);
+                    setShowModal(false);
+                    setEditingDosesUnit(false);
+                    resetForm();
+                } else {
+                    throw new Error(result.error || 'Unknown error occurred');
+                }
             } else {
                 const data = {
-                    name: form.name,
-                    limit
+                    unit: form.unit,
+                    limit,
+                    page
                 };
                 
-                const response = await fetch(`${process.env.REACT_APP_API_URL}/templates/add_template.php`, {
+                const response = await fetch(`${process.env.REACT_APP_API_URL}/Medicines/add_medicine_doses_unit.php`, {
                     method: 'POST', 
                     headers: {
                         'Content-Type': 'application/json',
                     },
                     body: JSON.stringify(data)
-                  });
+                });
               
-                  const result = await response.json();
+                const result = await response.json();
               
-                  if (response.ok) {
-                      setPreTemplates(result.updated_templates);
-                      setShowModal(false);
-                      resetForm();
-                  } else {
-                      throw new Error(result.error || 'Unknown error occurred');
-                  }
+                if (response.ok) {
+                    setDosesUnits(result.updated_units);
+                    setShowModal(false);
+                    resetForm();
+                } else {
+                    throw new Error(result.error || 'Unknown error occurred');
+                }
             }
         } catch (err) {
-            setError('Failed to add pre-template');
+            setError('Failed to process doses unit');
         } finally {
             setLoading(false);
+            setEditingDosesUnit(false);
         }
     };
 
-    const handleEditTemplateName = (template) => {
-        setEditingTemplate(true);
-        setForm({ ...template });
-        setShowModal(true);
-    };
-
-    const handleEditTemplate = async (template) => {
-        console.log(template)
-        const result = await fetchData({
-            API_URL: `Appointments/fetch_appointment.php/?t_id=${template.t_id}`
-        });
-
-        if (result.error) {
-            // throw new Error(result.error || 'Unknown error occurred');
-            if(result.error.includes("Appointment not found")) {
-                alert(result.error);
-            } else {
-                console.log("error");                
-            }
-        } else {
-            navigate(`/admin/doctor_panel/precibsion/${result.appointment.af_id}`, {
-                state: {
-                    "appointment_details": result.appointment
-                }
-            });
-        }
-    };
-
-    const handleDeleteTemplate = async (templateId) => {
+    const handleDeleteDosesUnit = async (dosesUnitId) => {
         setLoading(true);
         try {
-            const response = await fetch(`${process.env.REACT_APP_API_URL}/templates/delete_template.php?t_id=${templateId}&page=${page}&limit=${limit}`, {
+            const response = await fetch(`${process.env.REACT_APP_API_URL}/Medicines/delete_medicine_doses_unit.php?du_id=${dosesUnitId}&limit=${limit}&page=${page}`, {
                 method: 'GET', 
                 headers: {
                     'Content-Type': 'application/json',
                 } 
-              });
+            });
           
-              const result = await response.json();
+            const result = await response.json();
           
-              if (response.ok) {
-                  setPreTemplates(result.updated_templates)
-              } else {
-                  throw new Error(result.error || 'Unknown error occurred');
-              }
-            setShowModal(false);
+            if (response.ok) {
+                setDosesUnits(result.updated_units)
+            } else {
+                throw new Error(result.error || 'Unknown error occurred');
+            }
         } catch (err) {
-            setError('Failed to delete pre-template');
+            setError('Failed to delete doses unit');
         } finally {
             setLoading(false);
         }
     };
 
     const resetForm = () => {
-        setForm({ name: '' });
-    };
+        setForm({ unit: '', du_id: '' });
+    };    
 
     return (
         <div className="flex flex-col md:flex-row">
@@ -226,12 +205,12 @@ const Template = () => {
                 <Navbar />
                 <div className="p-4">
                     <div className="flex justify-between items-center mb-4">
-                        <h2 className="text-2xl font-semibold mb-4">Pre-Templates List</h2>
+                        <h2 className="text-2xl font-semibold mb-4">Medicine Doses Units List</h2>
                         <button
-                            onClick={openModal}
+                            onClick={() => openModal()}
                             className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none"
                         >
-                            Add Pre-Template
+                            Add Doses Unit
                         </button>
                     </div>
                     <div className="mb-6 flex items-center justify-between">
@@ -250,10 +229,11 @@ const Template = () => {
                             </select>
                             <span>Entries</span>
                         </div>
+                        
                         <div className="flex-shrink-0">
                             <input
                                 type="text"
-                                name="text"
+                                name='text'
                                 value={search}
                                 onChange={handleSearchChange}
                                 placeholder="Search..."
@@ -261,38 +241,35 @@ const Template = () => {
                             />
                         </div>
                     </div>
+
                     <div className="bg-white shadow-md rounded-lg p-6">
                         {loading ? (
                             <Loader />
-                        ) : preTemplates?.length === 0 ? (
-                            <p className="text-xl font-semibold text-center">No Pre-Templates Added</p>
-                        ) : (
+                        ) : dosesUnits.length === 0 ? (
+                            <p className="text-xl font-semibold text-center">No Doses Units Added</p>
+                        ) : error ? (
+                            <p className="text-red-500 mb-4">{error}</p>
+                        ): (
                             <table className="min-w-full table-auto">
                                 <thead className="bg-indigo-600 text-white">
                                     <tr>
-                                        <th className="px-4 py-2 font-medium">Name</th>
-                                        <th className="px-4 py-2 font-medium">Actions</th>
+                                        <th className="px-4 py-2 font-medium">Unit</th>
+                                        <th className="px-4 py-2 font-medium">Action</th>
                                     </tr>
                                 </thead>
                                 <tbody>
-                                    {preTemplates.map((template) => (
-                                        <tr key={template.t_id} className="hover:bg-gray-50">
-                                            <td className="border px-4 py-2">{template.name}</td>
+                                    {dosesUnits.map((unit) => (
+                                        <tr key={unit.du_id} className="hover:bg-gray-50">
+                                            <td className="border px-4 py-2">{unit.unit}</td>
                                             <td className="border px-4 py-2 flex items-center justify-center space-x-2">
                                                 <button
-                                                    onClick={() => handleEditTemplate(template)}
-                                                    className="text-blue-700 hover:text-blue-500"
-                                                >
-                                                    Edit template
-                                                </button>
-                                                <button
-                                                    onClick={() => handleEditTemplateName(template)}
+                                                    onClick={() => openModal(unit)} 
                                                     className="text-blue-700 hover:text-blue-500"
                                                 >
                                                     <EditIcon />
                                                 </button>
                                                 <button
-                                                    onClick={() => handleDeleteTemplate(template.t_id)}
+                                                    onClick={() => handleDeleteDosesUnit(unit.du_id)}
                                                     className="text-red-500 hover:text-red-400"
                                                 >
                                                     <DeleteIcon />
@@ -303,6 +280,7 @@ const Template = () => {
                                 </tbody>
                             </table>
                         )}
+
                         <div className="mt-4 flex justify-center items-center space-x-2">
                             <button
                                 onClick={() => handlePageChange(page - 1)}
@@ -329,36 +307,36 @@ const Template = () => {
                             </button>
                         </div>
                     </div>
+
                     {showModal && (
                         <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
                             <div className="bg-white p-6 rounded-lg w-96">
-                                <h2 className="text-2xl text-blue-700 font-semibold mb-4">{editingTemplate ? 'Edit Pre-Template' : 'Add Pre-Template'}</h2>
+                                <h2 className="text-2xl text-blue-700 font-semibold mb-4">
+                                    {editingDosesUnit ? 'Edit Doses Unit' : 'Add Doses Unit'}
+                                </h2>
                                 <div className="mb-4">
-                                    <label className="block text-lg font-medium">Name</label>
+                                    <label className="block text-lg font-medium">Unit</label>
                                     <input
                                         type="text"
-                                        name="name"
-                                        value={form.name}
+                                        name="unit"
+                                        value={form.unit}
                                         onChange={handleChange}
                                         className="border px-4 py-2 rounded-md w-full"
+                                        placeholder="e.g. mg, ml, tablets"
                                     />
                                 </div>
                                 <div className="flex justify-end space-x-4">
                                     <button
-                                        onClick={() => {
-                                            resetForm();
-                                            closeModal();
-                                            setEditingTemplate(false);
-                                        }}
+                                        onClick={closeModal}
                                         className="px-4 py-2 bg-gray-400 text-white rounded hover:bg-gray-500 focus:outline-none"
                                     >
-                                        Close
+                                        Cancel
                                     </button>
                                     <button
-                                        onClick={handleAddORUpdateTemplate}
+                                        onClick={handleAddOrUpdateDosesUnit}
                                         className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none"
                                     >
-                                        {editingTemplate ? 'Update' : 'Save'}
+                                        {editingDosesUnit ? 'Update' : 'Add'}
                                     </button>
                                 </div>
                             </div>
@@ -370,4 +348,4 @@ const Template = () => {
     );
 };
 
-export default Template;
+export default MedicineDosesUnits;

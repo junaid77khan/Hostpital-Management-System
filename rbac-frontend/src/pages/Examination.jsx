@@ -235,7 +235,6 @@ const Examination = () => {
             let response;
             if (isOptionEditing) {
                 data.eo_id = optionForm.eo_id;
-                console.log(data);
                 
                 response = await axios.post(
                     `${process.env.REACT_APP_API_URL}/examination/update_examination_option.php`,

@@ -12,7 +12,7 @@ import LocalPharmacyIcon from '@mui/icons-material/LocalPharmacy';
 import WebIcon from '@mui/icons-material/Web';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import { Tooltip } from '@mui/material';
-import { FiberManualRecord, ArrowForward } from '@mui/icons-material';
+import { FiberManualRecord, ArrowForward, ScaleOutlined } from '@mui/icons-material';
 import { FaHospital } from 'react-icons/fa';
 import { useLocation } from 'react-router-dom';
 
@@ -156,6 +156,14 @@ const Sidebar = () => {
                     <div
                         className={`pl-6 space-y-1 transition-all duration-300 ${openSection === 'setting' ? 'max-h-screen' : 'max-h-0 overflow-hidden'}`}
                     >
+                            <li className={`p-1 hover:bg-blue-800 transition-colors rounded-lg mx-2 ${path.includes('units') ? 'text-gray-400': 'text-white'}`}>
+                                <Link to="/admin/doctor_panel/settings/units" className="flex items-center gap-4">
+                                    <Box display="flex" alignItems="center">
+                                        <ScaleOutlined sx={{ fontSize: 14, marginRight: 1 }} /> 
+                                        <Typography variant="body1">Dose Units</Typography> 
+                                    </Box>
+                                </Link>
+                            </li>
                             <li className={`p-1 hover:bg-blue-800 transition-colors rounded-lg mx-2 ${path.includes('medicines') ? 'text-gray-400': 'text-white'}`}>
                                 <Link to="/admin/doctor_panel/settings/medicines" className="flex items-center gap-4">
                                     <Box display="flex" alignItems="center">

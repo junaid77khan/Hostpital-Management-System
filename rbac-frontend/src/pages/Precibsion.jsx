@@ -2,11 +2,13 @@ import React, { useEffect, useState, useCallback, useRef } from "react";
 import Sidebar from "../components/Sidebar";
 import Navbar from "../components/Navbar";
 import fetchData from "../utils/fetchData";
-import { useLocation } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import PatientDetail from "../components/PatientDetail";
 import { Delete } from '@mui/icons-material';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; 
+import TestReport from "../components/TestReport";
+import Loader from "../components/Loader";
 
 
 const useDebounce = (callback, delay) => {
@@ -64,17 +66,91 @@ const DoctorPanel = () => {
   const [testInputValues, setTestInputValues] = useState({});
   const [weight, setWeight] = useState(location.state.appointment_details.weight);
   const [error, setError] = useState("");
-  const [testError, setTestError] = useState('');
-  const [file, setFile] = useState(null);
+  const [testReport, setTestReport] = useState("");
+  const [file, setFile] = useState(null);  
+  const [selectedAppointmentImage, setSelectedAppointmentImage] = useState(null);
+  const [tempFile, setTempFile] = useState(null);
 
-  console.log(location.state);
+  const navigate = useNavigate();
   
 
-    const handleFileChange = (e) => {
-        const file = e.target.files[0];
-        if (file) {
-            setFile(file);
-        }
+    const handleReportChange = (event) => {
+      const file = event.target.files[0];
+      if (file) {
+        const imageURL = URL.createObjectURL(file);
+        setFile(imageURL)
+        setTempFile(file);
+      }
+    };
+  
+    // Handle form submission (you can replace this with an actual upload function)
+    const handleReportSubmit = async (e) => {
+      e.preventDefault();
+      setLoading(true);
+      if (!file) {
+          alert("Please select a file to upload.");
+          return;
+      }
+  
+      const formData = new FormData();
+      formData.append('photo', tempFile);
+      formData.append('af_id', appointment_details.af_id); 
+      formData.append('upload_img', 'true');
+      formData.append('date', appointment_details.date)
+  
+      try {
+          const response = await fetch(`${process.env.REACT_APP_API_URL}/report/process_upload_report.php`, {
+              method: 'POST',
+              body: formData,
+              // Remove the Content-Type header
+              mode: 'cors', 
+          });
+  
+          // It's better to parse JSON if your PHP is returning JSON
+          const result = await response.json(); 
+          
+          if (result.error) {
+              alert(result.error);
+          } else if (result.success) {
+              setSelectedAppointmentImage(file);
+              alert('Image uploaded successfully.');
+          }
+      } catch (error) {
+          console.error('Error uploading image:', error);
+          alert('Failed to upload image.');
+      } finally {
+        
+      setLoading(false);
+      }
+    };
+  
+    // Handle deleting the report
+    const handleDeleteReport = async (e) => {
+      e.preventDefault();
+      setLoading(true);
+      try {
+          const response = await fetch(`${process.env.REACT_APP_API_URL}/report/delete_report.php?af_id=${appointment_details.af_id}`, {
+              method: 'POST',
+              mode: 'cors', 
+          });
+  
+          const result = await response.json();
+          
+          if (result.error) {
+              alert(result.error);
+          } else {
+              setSelectedAppointmentImage(null);
+              setFile(null);
+              alert('Report deleted successfully.');
+          }
+      } catch (error) {
+          console.error('Error deleting image:', error);
+          alert('Failed to delete image.');
+      } finally {
+        
+      setLoading(false);
+      }
+      
     };
 
     const handleSubmit = async (e) => {
@@ -101,7 +177,6 @@ const DoctorPanel = () => {
   
           // It's better to parse JSON if your PHP is returning JSON
           const result = await response.json();
-          console.log(result);  
           
           if (result.error) {
               alert(result.error);
@@ -128,6 +203,7 @@ const DoctorPanel = () => {
     fetchMedicines();
     fetchMedicineEatingInstructions();
     fetchTests();
+    fetchReport();
   }, []);
 
   useEffect(() => {
@@ -135,7 +211,7 @@ const DoctorPanel = () => {
     
     patientComplaintList.forEach((complaint) => {
       const pc_id = complaint.pc_id;
-      const duration = inputValues[pc_id]?.duration;
+      const duration = debouncedDurationValues[pc_id];
 
       if (duration !== undefined) {
         timers[pc_id] = setTimeout(() => {
@@ -147,7 +223,7 @@ const DoctorPanel = () => {
     return () => {
       Object.values(timers).forEach((timer) => clearTimeout(timer));
     };
-  }, [debouncedDurationValues, patientComplaintList]);
+  }, [debouncedDurationValues]);
 
   useEffect(() => {
     const timers = {};
@@ -155,8 +231,11 @@ const DoctorPanel = () => {
     patientComplaintList.forEach((complaint) => {
       const pc_id = complaint.pc_id;
       const dose = inputValues[pc_id]?.dose;
+      // console.log(inputValues);
+      
 
       if (dose !== undefined) {
+        
         timers[pc_id] = setTimeout(() => {
           handleDurationAndDoseInput(dose, pc_id, 'dose');
         }, 1000);
@@ -166,12 +245,12 @@ const DoctorPanel = () => {
     return () => {
       Object.values(timers).forEach((timer) => clearTimeout(timer));
     };
-  }, [debouncedDoseValues, patientComplaintList]);
+  }, [debouncedDoseValues]);
 
   const handleDurationAndDoseInputChange = (e, pc_id, field) => {
     
     const value = e?.target?.value;
-
+    
     setInputValues(prevValues => ({
       ...prevValues,
       [pc_id]: {
@@ -238,6 +317,26 @@ const DoctorPanel = () => {
       document.removeEventListener("mousedown", handleOutsideClick);
     };
   }, [complaint?.pc_id]);
+
+  const fetchReport = async () => {
+    setLoading(true);
+    try {
+      const result = await fetchData({
+        API_URL: `report/fetch_report.php?af_id=${appointment_details.af_id}&date=${appointment_details.date}`,
+      });
+
+      if (result.error) {
+        setError(result.error);
+      } else {
+        setSelectedAppointmentImage(result.report.image_data);
+        setFile(result.report.image_data);
+      }
+    } catch {
+      setError('Failed to fetch report image');
+    } finally {
+      setLoading(false);
+    }
+  }
 
   const fetchMedicineTypes = async () => {
     setLoading(true);
@@ -403,7 +502,6 @@ const fetchTests = async () => {
         setError(examinationResult.error);
         return;
       }
-      console.log(examinationResult)
       setExaminations(examinationResult.data);
     } catch (err) {
       setError(err.message || "Failed to fetch examinations");
@@ -513,7 +611,6 @@ const fetchTests = async () => {
 
   const handleFormSubmit = async (e) => {
     e.preventDefault();  
-
     const data = {
       'p_id': appointment_details.p_id,
       'af_id': appointment_details.af_id,
@@ -662,6 +759,7 @@ const fetchPatientComplaintList = async () => {
         const initialInputValues = updatedComplaintList.reduce((acc, complaint) => {
           const medicine = complaint.medicines[0];
           if (medicine) {
+            // console.log(complaint);
             
             acc[complaint.pc_id] = {
               medicine_name: medicine.medicine_name || "",
@@ -669,12 +767,13 @@ const fetchPatientComplaintList = async () => {
               pm_id: medicine.pm_id || "",
               dose: medicine.dose || "",
               duration: medicine.duration || "",
-              medicine_dose: (Number)(medicine.medicine_dose) || 0,
-              medicine_eating: medicine.medicine_eating || ''
+              medicine_dose: (Number)(medicine.dose) || 0,
+              medicine_eating: medicine.medicine_eating || '',
+              custom_dose: complaint.custom_dose || ''
             };
           }
           return acc;
-        }, {});
+        }, {});       
         
         const initialDurationValues = Object.keys(initialInputValues).reduce((acc, pc_id) => {
           const complaint = initialInputValues[pc_id]; 
@@ -684,11 +783,10 @@ const fetchPatientComplaintList = async () => {
         
         const initialDoseValues = Object.keys(initialInputValues).reduce((acc, pc_id) => {
           const complaint = initialInputValues[pc_id]; 
-          
-          acc[pc_id] = ((Number)(complaint.medicine_dose) * (Number)(weight)) || ''; 
+          acc[pc_id] = ((Number)(complaint.medicine_dose) * (Number)(weight)) || '';
           return acc;
         }, {});
-        setDebouncedDoseValues(initialDoseValues);
+        // setDebouncedDoseValues(initialDoseValues);
         setDebouncedDurationValues(initialDurationValues);
         setInputValues(initialInputValues);
       }
@@ -761,7 +859,6 @@ const handleMedicineInputChange = async (event, index, field) => {
     });       
     
     const filteredMedicines = medicinesOfSameType.filter((medicine) => {
-      console.log("Filtering based on name:", medicine.name, "with query:", query);
       return medicine.name.toLowerCase().includes(query.toLowerCase());
     });   
     
@@ -904,13 +1001,14 @@ const handleDurationAndDoseInput = async (value, index, field) => {
       [field]: value
     }
   }));
+  const pm_id = inputValues[index].pm_id;
   
   if(field === "duration") {
     const data =  {
-      'pc_id': index,
+      'pm_id': pm_id,
       [field]: value, 
     }
-    const response = await fetch(`${process.env.REACT_APP_API_URL}/Patient/update_patient_complaint.php`, {
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/Patient/update_patient_medicine.php`, {
       method: 'POST', 
       headers: {
           'Content-Type': 'application/json',
@@ -925,9 +1023,8 @@ const handleDurationAndDoseInput = async (value, index, field) => {
     } else {
         throw new Error(result.error || 'Unknown error occurred');
     }
-  }
-
-  const pm_id = inputValues[index]?.pm_id;
+  }else {
+    const pm_id = inputValues[index]?.pm_id;
     if(pm_id) {
       // update value
       const data =  {
@@ -976,7 +1073,34 @@ const handleDurationAndDoseInput = async (value, index, field) => {
           throw new Error(result.error || 'Unknown error occurred');
       }
     }
+  }
 };
+
+const handleDoseValue = async(pc_id, dose) => {
+  console.log(pc_id, ' ', dose);
+  
+  const pm_id = inputValues[pc_id].pm_id;
+  const data =  {
+    'pm_id': pm_id,
+    "dose": dose, 
+  }
+
+  const response = await fetch(`${process.env.REACT_APP_API_URL}/Patient/update_patient_medicine.php`, {
+    method: 'POST', 
+    headers: {
+        'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(data), 
+  });
+
+  const result = await response.json();
+
+  if (result.success) {
+      // fetchPatientComplaintList();
+  } else {
+      throw new Error(result.error || 'Unknown error occurred');
+  }
+}
 
 
 
@@ -990,13 +1114,28 @@ const handleDurationAndDoseInput = async (value, index, field) => {
         [field]: medicine.name,
       }
     }));
+
+    const matchedMedicine = medicines.find(
+      med => med.name === medicine.name && med.type === inputValues[index]?.type
+    );
+    
+    if (matchedMedicine && matchedMedicine.dose) {
+      setInputValues(prevValues => ({
+        ...prevValues,
+        [index]: {
+          ...prevValues[index],
+          "dose": Number(matchedMedicine.dose) * weight,
+        }
+      }));
+      handleDoseValue(index, Number(matchedMedicine.dose) * weight);
+    }
   
     if (field === "medicine_name") {
       setFilteredMedicinesMap(prevMap => ({
         ...prevMap,
         [index]: [] 
       }));
-      fetchPatientComplaintList();
+      // fetchPatientComplaintList();
     } else if (field === "medicine_eating") {
       setFilteredFoodEatInstMap(prevMap => ({
         ...prevMap,
@@ -1093,41 +1232,68 @@ const handleDurationAndDoseInput = async (value, index, field) => {
     setLoading(true); 
 
     try {
-      const response = await fetch(`${process.env.REACT_APP_API_URL}/templates/update_template_data.php?t_id=${template.t_id}&af_id=${appointment_details.af_id}&p_id=${appointment_details.p_id}`, {
+      const response = await fetch(`${process.env.REACT_APP_API_URL}/templates/update_template_data.php?t_id=${template.t_id}&af_id=${appointment_details.af_id}&p_id=${appointment_details.p_id}&weight=${weight}`, {
         method: 'GET',
         headers: {
           'Content-Type': 'application/json',
         }
       });
 
-      const result = await response.json();
-
-      if (result.error) {
-        console.log(result.error);
-        
-        alert(result.error);
+      if (!response.ok) {
+        alert("Failed to copy template");
       } else {
+        alert("Template Data Copied");
         fetchPatientComplaintList();
+        fetchPatientTestList();
       }
     } catch (err) {
-      // setError(err.message);
       console.log(err);
-        
-      alert("Failed to add template");
+      alert("Failed to copy template.");
     } finally {
       setLoading(false);
     }
   }
+
+  const handleCustomDose = async(e, pc_id) => {
+    const value = e.target.value;
+    setInputValues(prevValues => ({
+      ...prevValues,
+      [pc_id]: {
+        ...prevValues[pc_id],
+        "custom_dose": value
+      }
+    }));
+
+    const data = {
+      "pc_id": pc_id,
+      "custom_dose": value
+    };
+
+    const response = await fetch(`${process.env.REACT_APP_API_URL}/Patient/update_custom_dose.php`, {
+      method: 'POST', 
+      headers: {
+          'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data), 
+    });
+
+    const result = await response.json();
+
+    if (response.ok) {
+        // fetchPatientComplaintList();
+    } else {
+        throw new Error(result.error || 'Unknown error occurred');
+    }
+  }
   
   return (
-    <div className="flex flex-col md:flex-row">
+    <div key={appointment_details.af_id} className="flex flex-col md:flex-row">
       <Sidebar />
       <div className="flex-1">
         <Navbar />
         <div className="p-4">
+        
           <main className="flex-1 p-5">
-            {/* Templates */}
-            
             <div className="mb-5 space-y-4 md:space-y-0 md:space-x-2 flex gap-2 flex-wrap justify-center">
               {templates.map((template) => (
                 <button
@@ -1307,7 +1473,8 @@ const handleDurationAndDoseInput = async (value, index, field) => {
                       <th className="border border-gray-300 px-4 py-2 w-24">Complaint Name</th>
                       <th className="border border-gray-300 px-4 py-2 w-32">Type</th>
                       <th className="border border-gray-300 px-4 py-2 w-64">Medicine</th>
-                      <th className="border border-gray-300 px-4 py-2 w-20">Dose</th>
+                      <th className="border border-gray-300 px-4 py-2 w-24">Dose</th>
+                      {/* <th className="border border-gray-300 px-4 py-2 w-24">Custom Dose</th> */}
                       <th className="border border-gray-300 px-4 py-2 w-64">Eating Ins.</th>
                       <th className="border border-gray-300 px-4 py-2 w-16">Duration</th>
                       <th className="border border-gray-300 px-4 py-2 w-8">Actions</th>
@@ -1380,12 +1547,32 @@ const handleDurationAndDoseInput = async (value, index, field) => {
                             <input
                               autoComplete="off"
                               type="text"
-                              value={debouncedDoseValues[complaint.pc_id]}
-                              onChange={(e) => handleDurationAndDoseInputChange(e, complaint.pc_id, "medicine_dose")}
+                              value={inputValues[complaint?.pc_id]?.dose ?? null}
+                              onChange={(e) => {
+                                // handleDurationAndDoseInputChange(e, complaint.pc_id, "dose")
+                                setInputValues(prevValues => ({
+                                  ...prevValues,
+                                  [complaint.pc_id]: {
+                                    ...prevValues[complaint.pc_id],
+                                    "dose": e.target.value,
+                                  }
+                                }));
+                                handleDoseValue(complaint.pc_id, e.target.value)
+                              }}
                               placeholder="Dose"
                               className="w-full border border-gray-300 rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
                             />
                           </td>
+                          {/* <td className="border border-gray-300 px-4 py-2">
+                            <input
+                              autoComplete="off"
+                              type="text"
+                              value={inputValues[complaint.pc_id].custom_dose || ""}
+                              onChange={(e) => handleCustomDose(e, complaint.pc_id)}
+                              placeholder="Custom Dose"
+                              className="w-full border border-gray-300 rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                            />
+                          </td> */}
                           <td className="border border-gray-300 px-4 py-2">
                             <div className="relative">
                               <textarea
@@ -1571,7 +1758,7 @@ const handleDurationAndDoseInput = async (value, index, field) => {
                               }} 
                             >
                                 {foodEatingInst.map((instruction) => (
-                                    <option key={instruction.fei_id} value={instruction.fei_id}>
+                                    <option key={instruction.fei_id} value={instruction.name}>
                                         {instruction.name}
                                     </option>
                                 ))}
@@ -1647,49 +1834,17 @@ const handleDurationAndDoseInput = async (value, index, field) => {
 
 
                         {/* Test Report Section */}
-                        <div className="p-6 rounded-lg shadow-lg border border-gray-300 flex flex-col bg-white transition-transform transform ">
-                            <h3 className="text-lg font-semibold mb-4 text-center text-blue-500">Test Report</h3>
-                            <div className="space-y-4">
-                            {/* Upload Image */}
-                            <div className="flex flex-col">
-                              <label htmlFor="uploadTestReport" className="text-sm font-medium text-gray-700 mb-2">
-                                  Upload Test Report Image
-                              </label>
-                              <input
-                                  type="file"
-                                  id="uploadTestReport"
-                                  name="image"
-                                  className="p-3 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
-                                  onChange={handleFileChange}
-                              />
-                              <button
-                                  type="submit"
-                                  onClick={handleSubmit}
-                                  className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md"
-                              >
-                                  Upload
-                              </button>
-                          </div>
-                            </div>
-                            {/* Buttons for View in Doctor Receipt and Hospital Receipt */}
-                            <div className="flex flex-wrap justify-center items-center mt-6 space-x-0 space-y-4 sm:space-y-0 sm:space-x-4">
-                              <a 
-                                href={`https://santhospital.com/admin/doctor_panel/production/paper.php?id=${appointment_details.af_id}&p=1`} 
-                                className="w-full sm:w-auto bg-blue-500 text-white text-center py-3 px-6 rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500 transition duration-200"
-                              >
-                                View in Patient Receipt
-                              </a>
-                              {/* Uncomment the below button if needed */}
-                              {/* 
-                              <button 
-                                className="w-full sm:w-auto bg-green-500 text-white text-center py-3 px-6 rounded-md hover:bg-green-600 focus:outline-none focus:ring-2 focus:ring-green-500 transition duration-200"
-                              >
-                                View in Hospital Receipt
-                              </button> 
-                              */}
-                            </div>
-
-                        </div>
+                        <TestReport 
+                          appointment_details={appointment_details}
+                        />
+                        {/* <div className="flex justify-center items-center">
+                          <button
+                            onClick={() =>
+                              navigate("/admin/doctor_panel/report", { state: { af_id: appointment_details.af_id, date: appointment_details.date } })
+                            }
+                            className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                          >View Reports</button>
+                        </div> */}
                         </div>
 
                         <div className="p-6 mt-6 rounded-lg shadow-md border border-gray-300 bg-white">

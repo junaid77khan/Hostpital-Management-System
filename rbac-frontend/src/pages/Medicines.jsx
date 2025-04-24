@@ -7,6 +7,7 @@ import fetchData from '../utils/fetchData';
 
 const Medicines = () => {
     const [medicines, setMedicines] = useState([]);
+    const [dosesUnits, setDosesUnits] = useState([]);
     const [types, setTypes] = useState([]);
     const [page, setPage] = useState(1);
     const [limit, setLimit] = useState(10);
@@ -17,6 +18,7 @@ const Medicines = () => {
         name: '',
         type: '',
         eat_instructions: '',
+        unit: '',
         dose: '',
         description: '',
         duration: '',
@@ -31,6 +33,32 @@ const Medicines = () => {
     const [isLoading, setIsLoading] = useState(true);
 
     const debounceTimeout = useRef(null);
+
+        useEffect(() => {
+            fetchDosesUnits();
+        }, [page, limit, debouncedSearch]);
+    
+        const fetchDosesUnits = async () => {
+            setLoading(true);
+            try {
+                const result = await fetchData({
+                    API_URL: 'Medicines/Get_Medicine_Doses_Units.php',
+                    Page_Number: page,
+                    Limit: limit,
+                    Search_Term: debouncedSearch,
+                });
+    
+                if (result.error) {
+                    setError(result.error);
+                } else {
+                    setDosesUnits(result.doses_units || []); 
+                }
+            } catch (err) {
+                setError('Failed to fetch doses units');
+            } finally {
+                setLoading(false);
+            }
+        };
 
     useEffect(() => {
         const initializeData = async () => {
@@ -162,6 +190,7 @@ const Medicines = () => {
                     description: form.description,
                     type: form.type,
                     medicine_eating: form.eat_instructions,
+                    unit: form.unit,
                     dose: form.dose,
                 };
                 const response = await fetch(`${process.env.REACT_APP_API_URL}/Medicines/update_medicine.php`, {
@@ -189,6 +218,7 @@ const Medicines = () => {
                     type: form.type,
                     medicine_eating: form.eat_instructions,
                     dose: form.dose,
+                    unit: form.unit
                 };
                 
                 const response = await fetch(`${process.env.REACT_APP_API_URL}/Medicines/add_medicine.php`, {
@@ -308,9 +338,11 @@ const Medicines = () => {
                                         <thead className="bg-indigo-600 text-white">
                                             <tr>
                                                 <th className="px-4 py-2 font-medium">Name</th>
+                                                <th className="px-4 py-2 font-medium">Med. Eating Inst.</th>
                                                 <th className="px-4 py-2 font-medium">Description</th>
                                                 <th className="px-4 py-2 font-medium">Type</th>
-                                                <th className="px-4 py-2 font-medium">Dose (Kg)</th>
+                                                <th className="px-4 py-2 font-medium">Dose</th>
+                                                <th className="px-4 py-2 font-medium">Unit</th>
                                                 <th className="px-4 py-2 font-medium">Actions</th>
                                             </tr>
                                         </thead>
@@ -318,9 +350,11 @@ const Medicines = () => {
                                             {medicines.map((medicine, index) => (
                                                 <tr key={index} className="hover:bg-gray-50">
                                                     <td className="border px-4 py-2">{medicine.name}</td>
+                                                    <td className="border px-4 py-2">{medicine.eat_instruction}</td>
                                                     <td className="border px-4 py-2">{medicine.description}</td>
                                                     <td className="border px-4 py-2">{medicine.type}</td>
                                                     <td className="border px-4 py-2">{medicine.dose}</td>
+                                                    <td className="border px-4 py-2">{medicine.unit ? medicine.unit : 'Not Set'}</td>
                                                     <td className="border px-4 py-2 flex items-center justify-center space-x-2">
                                                         <button
                                                             onClick={() => handleEditMedicine(medicine)}
@@ -417,7 +451,23 @@ const Medicines = () => {
                                     </select>
                                 </div>
                                 <div className="mb-4">
-                                    <label className="block text-lg font-medium">Dose / Kg</label>
+                                    <label className="block text-lg font-medium">Unit</label>
+                                    <select
+                                        name="unit"
+                                        value={form.unit}
+                                        onChange={handleChange}
+                                        className="border px-4 py-2 rounded-md w-full"
+                                    >
+                                        <option value="">Select Unit</option>
+                                        {dosesUnits.map((unit, idx) => (
+                                            <option key={idx} value={unit.unit}>
+                                                {unit.unit}
+                                            </option>
+                                        ))}
+                                    </select>
+                                </div>
+                                <div className="mb-4">
+                                    <label className="block text-lg font-medium">Dose</label>
                                     <input
                                         type="text"
                                         name="dose"

@@ -111,7 +111,7 @@ const Online_Patient_Appointments = () => {
     };
 
     const handleView = (patient) => {
-        navigate("/admin/doctor_panel/precibsion", {
+        navigate("/admin/doctor_panel/precibsion/${patient.af_id}", {
             state: {
               appointment_details: patient,
             },
