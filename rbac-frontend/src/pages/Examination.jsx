@@ -137,7 +137,7 @@ const Examination = () => {
             pages.push(
                 <button
                     key={i}
-                    className={`px-4 py-2 ${i === page ? 'bg-blue-500 text-white' : 'bg-gray-300'} rounded-md`}
+                    className={`px-4 py-2 ${i === page ? 'bg-teal-500 text-white' : 'bg-gray-300'} rounded-md`}
                     onClick={() => handlePageChange(i)}
                 >
                     {i}
@@ -270,7 +270,7 @@ const Examination = () => {
                         <h2 className="text-2xl font-semibold mb-4">Examinations List</h2>
                         <button
                             onClick={openModal}
-                            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none"
+                            className="px-4 py-2 bg-teal-500 text-white rounded hover:bg-teal-600 focus:outline-none"
                         >
                             Add Examination
                         </button>
@@ -298,7 +298,7 @@ const Examination = () => {
                                 value={search}
                                 onChange={handleSearchChange}
                                 placeholder="Search..."
-                                className="border px-4 py-2 rounded-md w-48 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                className="border px-4 py-2 rounded-md w-48 focus:outline-none focus:ring-2 focus:ring-teal-400"
                             />
                         </div>
                     </div>
@@ -309,7 +309,7 @@ const Examination = () => {
                             <p className="text-xl font-semibold text-center text-gray-500">No Examinations Added</p>
                         ) : (
                             <table className="w-full border-collapse border border-gray-300">
-                                <thead className="bg-indigo-600 text-white">
+                                <thead className="bg-teal-600 text-white">
                                     <tr>
                                         <th className="border px-4 py-2 text-left font-medium">Name</th>
                                         <th className="border px-4 py-2 text-left font-medium">Options</th>
@@ -332,7 +332,7 @@ const Examination = () => {
                                                             <div className="flex items-center space-x-2">
                                                                 <button
                                                                     onClick={() => handleEditOption(examination.e_id, option.eo_id)}
-                                                                    className="text-blue-600 hover:text-blue-800"
+                                                                    className="text-teal-600 hover:text-teal-800"
                                                                 >
                                                                     <EditIcon fontSize="small" />
                                                                 </button>
@@ -350,7 +350,7 @@ const Examination = () => {
                                                 )}
                                                 <button
                                                     onClick={() => handleAddOption(examination.e_id)}
-                                                    className="px-3 py-2 bg-blue-500 text-white text-sm rounded-md hover:bg-blue-600 focus:outline-none"
+                                                    className="px-3 py-2 bg-teal-500 text-white text-sm rounded-md hover:bg-teal-600 focus:outline-none"
                                                 >
                                                     Add Option
                                                 </button>
@@ -360,7 +360,7 @@ const Examination = () => {
                                             <td className="border px-4 py-3 flex items-center justify-center space-x-4">
                                                 <button
                                                     onClick={() => handleEditExamination(examination)}
-                                                    className="text-blue-600 hover:text-blue-800"
+                                                    className="text-teal-600 hover:text-teal-800"
                                                 >
                                                     <EditIcon />
                                                 </button>
@@ -382,7 +382,7 @@ const Examination = () => {
                                 className={`px-4 py-2 rounded-md text-sm font-medium ${
                                     page === 1
                                         ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                        : 'bg-blue-500 text-white hover:bg-blue-600'
+                                        : 'bg-teal-500 text-white hover:bg-teal-600'
                                 }`}
                                 disabled={page === 1}
                             >
@@ -394,7 +394,7 @@ const Examination = () => {
                                 className={`px-4 py-2 rounded-md text-sm font-medium ${
                                     page === totalPages
                                         ? 'bg-gray-300 text-gray-500 cursor-not-allowed'
-                                        : 'bg-blue-500 text-white hover:bg-blue-600'
+                                        : 'bg-teal-500 text-white hover:bg-teal-600'
                                 }`}
                                 disabled={page === totalPages}
                             >
@@ -406,7 +406,7 @@ const Examination = () => {
                     {showModal && (
                         <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
                             <div className="bg-white p-6 rounded-lg w-96">
-                                <h2 className="text-2xl text-blue-700 font-semibold mb-4">{editingExamination ? 'Edit Examination' : 'Add Examination'}</h2>
+                                <h2 className="text-2xl text-teal-700 font-semibold mb-4">{editingExamination ? 'Edit Examination' : 'Add Examination'}</h2>
                                 <div className="mb-4">
                                     <label className="block text-lg font-medium">Name</label>
                                     <input
@@ -430,7 +430,7 @@ const Examination = () => {
                                     </button>
                                     <button
                                         onClick={handleAddORUpdateExamination}
-                                        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none"
+                                        className="px-4 py-2 bg-teal-500 text-white rounded hover:bg-teal-600 focus:outline-none"
                                     >
                                         {editingExamination ? 'Update' : 'Save'}
                                     </button>
@@ -467,7 +467,7 @@ const Examination = () => {
                                         </button>
                                         <button
                                             onClick={handleAddORUpdateOptionApi}
-                                            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                                            className="px-4 py-2 bg-teal-500 text-white rounded hover:bg-teal-600"
                                         >
                                             {isOptionEditing ? 'Update' : 'Add'}
                                         </button>

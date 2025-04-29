@@ -90,7 +90,7 @@ const ManageTestList = () => {
             pages.push(
                 <button
                     key={i}
-                    className={`px-4 py-2 ${i === page ? 'bg-blue-500 text-white' : 'bg-gray-300'} rounded-md`}
+                    className={`px-4 py-2 ${i === page ? 'bg-teal-500 text-white' : 'bg-gray-300'} rounded-md`}
                     onClick={() => handlePageChange(i)}
                 >
                     {i}
@@ -205,7 +205,7 @@ const ManageTestList = () => {
                         <h2 className="text-2xl font-semibold mb-4">Test List</h2>
                         <button
                             onClick={openModal}
-                            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none"
+                            className="px-4 py-2 bg-teal-500 text-white rounded hover:bg-teal-600 focus:outline-none"
                         >
                             Add Test
                         </button>
@@ -233,7 +233,7 @@ const ManageTestList = () => {
                                 value={search}
                                 onChange={handleSearchChange}
                                 placeholder="Search..."
-                                className="border px-4 py-2 rounded-md w-48 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                className="border px-4 py-2 rounded-md w-48 focus:outline-none focus:ring-2 focus:ring-teal-400"
                             />
                         </div>
                     </div>
@@ -244,7 +244,7 @@ const ManageTestList = () => {
                             <p className="text-xl font-semibold text-center">No Tests Added</p>
                         ) : (
                             <table className="min-w-full table-auto">
-                                <thead className="bg-indigo-600 text-white">
+                                <thead className="bg-teal-600 text-white">
                                     <tr>
                                         <th className="px-4 py-2 font-medium">Name</th>
                                         <th className="px-4 py-2 font-medium">Actions</th>
@@ -257,7 +257,7 @@ const ManageTestList = () => {
                                             <td className="border px-4 py-2 flex items-center justify-center space-x-2">
                                                 <button
                                                     onClick={() => handleEditTest(test)}
-                                                    className="text-blue-700 hover:text-blue-500"
+                                                    className="text-teal-700 hover:text-teal-500"
                                                 >
                                                     <EditIcon />
                                                 </button>
@@ -279,7 +279,7 @@ const ManageTestList = () => {
                                 className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-300 ${
                                     page === 1
                                         ? 'bg-gray-200 text-black cursor-not-allowed'
-                                        : 'bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400'
+                                        : 'bg-teal-500 text-white hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-400'
                                 }`}
                                 disabled={page === 1}
                             >
@@ -291,7 +291,7 @@ const ManageTestList = () => {
                                 className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-300 ${
                                     page === totalPages
                                         ? 'bg-gray-200 text-black cursor-not-allowed'
-                                        : 'bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400'
+                                        : 'bg-teal-500 text-white hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-400'
                                 }`}
                                 disabled={page === totalPages}
                             >
@@ -302,7 +302,7 @@ const ManageTestList = () => {
                     {showModal && (
                         <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
                             <div className="bg-white p-6 rounded-lg w-96">
-                                <h2 className="text-2xl text-blue-700 font-semibold mb-4">{editingTest ? 'Edit Test' : 'Add Test'}</h2>
+                                <h2 className="text-2xl text-teal-700 font-semibold mb-4">{editingTest ? 'Edit Test' : 'Add Test'}</h2>
                                 <div className="mb-4">
                                     <label className="block text-lg font-medium">Name</label>
                                     <input
@@ -326,7 +326,7 @@ const ManageTestList = () => {
                                     </button>
                                     <button
                                         onClick={handleAddORUpdateTest}
-                                        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none"
+                                        className="px-4 py-2 bg-teal-500 text-white rounded hover:bg-teal-600 focus:outline-none"
                                     >
                                         {editingTest ? 'Update' : 'Save'}
                                     </button>

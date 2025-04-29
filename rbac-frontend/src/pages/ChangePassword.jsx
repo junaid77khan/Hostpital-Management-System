@@ -45,7 +45,7 @@ const ChangePassword = () => {
                 <Navbar />
                 <div className="p-6 md:px-12 lg:px-16">
                     <div className="bg-white p-6 rounded-lg shadow-lg mb-6">
-                        <h2 className="text-3xl font-semibold text-blue-700">Change Password</h2>
+                        <h2 className="text-3xl font-semibold text-teal-700">Change Password</h2>
                         <p className="text-gray-600 mt-2">Update your password securely. Ensure your new password is strong and unique.</p>
                     </div>
 
@@ -61,7 +61,7 @@ const ChangePassword = () => {
                                     value={oldPassword}
                                     onChange={(e) => setOldPassword(e.target.value)}
                                     required
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
                                 />
                             </div>
 
@@ -72,7 +72,7 @@ const ChangePassword = () => {
                                     value={newPassword}
                                     onChange={(e) => setNewPassword(e.target.value)}
                                     required
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
                                 />
                             </div>
 
@@ -83,13 +83,13 @@ const ChangePassword = () => {
                                     value={confirmPassword}
                                     onChange={(e) => setConfirmPassword(e.target.value)}
                                     required
-                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="w-full px-4 py-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-teal-500"
                                 />
                             </div>
 
                             <button
                                 type="submit"
-                                className="w-full py-3 bg-blue-600 text-white font-medium rounded-lg hover:bg-blue-700 transition duration-300"
+                                className="w-full py-3 bg-teal-600 text-white font-medium rounded-lg hover:bg-teal-700 transition duration-300"
                             >
                                 Change Password
                             </button>

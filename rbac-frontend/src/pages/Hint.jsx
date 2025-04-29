@@ -243,7 +243,7 @@ const NextHint = () => {
                             <p className="text-xl font-semibold text-center">No Next Hints Added</p>
                         ) : (
                             <table className="min-w-full table-auto">
-                                <thead className="bg-indigo-600 text-white">
+                                <thead className="bg-teal-600 text-white">
                                     <tr>
                                         <th className="px-4 py-2 font-medium">Name</th>
                                         <th className="px-4 py-2 font-medium">Actions</th>

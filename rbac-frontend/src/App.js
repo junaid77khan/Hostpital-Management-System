@@ -179,7 +179,7 @@ function App() {
           } 
         />
         <Route 
-          path="/admin/doctor_panel/patients/history" 
+          path="/admin/doctor_panel/patients-history" 
           element={
             <PrivateRoute>
               <PatientHistory />

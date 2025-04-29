@@ -96,7 +96,7 @@ const OptionsPage = () => {
                             </button>
                             <button
                                 onClick={handleAddOption}
-                                className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                                className="px-4 py-2 bg-teal-500 text-white rounded hover:bg-teal-600"
                             >
                                 Add Option
                             </button>
@@ -105,7 +105,7 @@ const OptionsPage = () => {
 
                     <div className="bg-white shadow-md rounded-lg p-6">
                         <table className="min-w-full table-auto">
-                            <thead className="bg-indigo-600 text-white">
+                            <thead className="bg-teal-600 text-white">
                                 <tr>
                                     <th className="px-4 py-2 font-medium">Option Name</th>
                                     <th className="px-4 py-2 font-medium">Action</th>
@@ -119,7 +119,7 @@ const OptionsPage = () => {
                                         <td className="border px-4 py-2 flex items-center justify-center space-x-2">
                                             <button
                                                 onClick={() => handleEditOption(option)}
-                                                className="text-blue-700 hover:text-blue-500"
+                                                className="text-teal-700 hover:text-teal-500"
                                             >
                                                 <EditIcon />
                                             </button>
@@ -149,7 +149,7 @@ const OptionsPage = () => {
                     {showModal && (
                         <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
                             <div className="bg-white p-6 rounded-lg w-96">
-                                <h2 className="text-2xl text-blue-700 font-semibold mb-4">
+                                <h2 className="text-2xl text-teal-700 font-semibold mb-4">
                                     {editing ? 'Edit Option' : 'Add Option'}
                                 </h2>
                                 <div className="mb-4">
@@ -173,7 +173,7 @@ const OptionsPage = () => {
                                     </button>
                                     <button
                                         onClick={handleSubmit}
-                                        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600"
+                                        className="px-4 py-2 bg-teal-500 text-white rounded hover:bg-teal-600"
                                     >
                                         {editing ? 'Update' : 'Add'}
                                     </button>

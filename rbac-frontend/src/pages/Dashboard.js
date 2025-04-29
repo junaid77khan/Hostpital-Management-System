@@ -73,7 +73,7 @@ const Dashboard = () => {
                 <Navbar />
                 <div className="p-6 md:px-12 lg:px-16">
                     <div className="bg-white p-6 rounded-lg shadow-lg mb-6">
-                        <h2 className="text-3xl font-semibold text-blue-700">Welcome to the Sant Hospital Management System</h2>
+                        <h2 className="text-3xl font-semibold text-teal-700">Welcome to the Sant Hospital Management System</h2>
                         <p className="text-gray-600 mt-2">
                             Effortlessly manage patient records, appointments, and staff operations. Streamline healthcare processes with our secure and user-friendly platform. 
                             <br />
@@ -82,7 +82,7 @@ const Dashboard = () => {
                     </div>
 
                     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
-                        <div className="bg-blue-500 text-white p-6 rounded-lg shadow-lg flex flex-col items-center justify-center">
+                        <div className="bg-teal-500 text-white p-6 rounded-lg shadow-lg flex flex-col items-center justify-center">
                             <h3 className="text-xl font-semibold">Total Patients</h3>
                             <p className="text-3xl font-bold">{totalPatients}</p>
                         </div>

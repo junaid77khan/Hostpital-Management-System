@@ -38,20 +38,18 @@ const Sidebar = () => {
     };
 
     useEffect(() => {
-        const appointmentPaths = ["today", "all", "online"];
+        const appointmentPaths = ["today", "all"];
         const settingPaths = [
-            "units",
             "medicines", 
             "medicine-eating-instruction", 
             "food-eating-instruction", 
             "next-suggestion", 
             "medicine-type", 
             "examination", 
-            "add-pre-template",
-            "manage-test-list"
+            "add-pre-template"
         ];
         const hintsPaths = ["hints"];
-        const patientPaths = ["patients-history"];
+        const patientPaths = ["patient"];
         const profilePaths = ["profile"];
         const websitePaths = ["website"];
     
@@ -62,7 +60,7 @@ const Sidebar = () => {
         } else if (hintsPaths.some(p => path.includes(p))) {
             setOpenSection("hints");
         } else if (patientPaths.some(p => path.includes(p))) {
-            setOpenSection("patients-history");
+            setOpenSection("patients");
         } else if (profilePaths.some(p => path.includes(p))) {
             setOpenSection("profile");
         } else if (websitePaths.some(p => path.includes(p))) {
@@ -225,15 +223,15 @@ const Sidebar = () => {
                                 to="patients" 
                                 icon={User} 
                                 label="Patients" 
-                                onClick={() => handleSectionToggle('patients-history')} 
-                                active={openSection === 'patients-history'}
+                                onClick={() => handleSectionToggle('patients')} 
+                                active={openSection === 'patients'}
                                 children={true}
                             />
                             
                             {/* Patients Submenu */}
-                            <div className={`overflow-hidden transition-all duration-300 ease-in-out ${openSection === 'patients-history' ? 'max-h-20' : 'max-h-0'}`}>
+                            <div className={`overflow-hidden transition-all duration-300 ease-in-out ${openSection === 'patients' ? 'max-h-20' : 'max-h-0'}`}>
                                 <ul className="py-1 space-y-1">
-                                    <SubMenuItem to="/admin/doctor_panel/patients-history" label="Patient History" />
+                                    <SubMenuItem to="/admin/doctor_panel/patients/history" label="Patient History" />
                                 </ul>
                             </div>
 

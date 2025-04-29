@@ -98,7 +98,7 @@ const MedicineDosesUnits = () => {
             pages.push(
                 <button
                     key={i}
-                    className={`px-4 py-2 ${i === page ? 'bg-blue-500 text-white' : 'bg-gray-300'} rounded-md`}
+                    className={`px-4 py-2 ${i === page ? 'bg-teal-500 text-white' : 'bg-gray-300'} rounded-md`}
                     onClick={() => handlePageChange(i)}
                 >
                     {i}
@@ -208,7 +208,7 @@ const MedicineDosesUnits = () => {
                         <h2 className="text-2xl font-semibold mb-4">Medicine Doses Units List</h2>
                         <button
                             onClick={() => openModal()}
-                            className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none"
+                            className="px-4 py-2 bg-teal-500 text-white rounded hover:bg-teal-600 focus:outline-none"
                         >
                             Add Doses Unit
                         </button>
@@ -237,7 +237,7 @@ const MedicineDosesUnits = () => {
                                 value={search}
                                 onChange={handleSearchChange}
                                 placeholder="Search..."
-                                className="border px-4 py-2 rounded-md w-48 focus:outline-none focus:ring-2 focus:ring-blue-400"
+                                className="border px-4 py-2 rounded-md w-48 focus:outline-none focus:ring-2 focus:ring-teal-400"
                             />
                         </div>
                     </div>
@@ -251,7 +251,7 @@ const MedicineDosesUnits = () => {
                             <p className="text-red-500 mb-4">{error}</p>
                         ): (
                             <table className="min-w-full table-auto">
-                                <thead className="bg-indigo-600 text-white">
+                                <thead className="bg-teal-600 text-white">
                                     <tr>
                                         <th className="px-4 py-2 font-medium">Unit</th>
                                         <th className="px-4 py-2 font-medium">Action</th>
@@ -264,7 +264,7 @@ const MedicineDosesUnits = () => {
                                             <td className="border px-4 py-2 flex items-center justify-center space-x-2">
                                                 <button
                                                     onClick={() => openModal(unit)} 
-                                                    className="text-blue-700 hover:text-blue-500"
+                                                    className="text-teal-700 hover:text-teal-500"
                                                 >
                                                     <EditIcon />
                                                 </button>
@@ -287,7 +287,7 @@ const MedicineDosesUnits = () => {
                                 className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-300 ${
                                     page === 1
                                         ? 'bg-gray-200 text-black cursor-not-allowed'
-                                        : 'bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400'
+                                        : 'bg-teal-500 text-white hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-400'
                                 }`}
                                 disabled={page === 1}
                             >
@@ -299,7 +299,7 @@ const MedicineDosesUnits = () => {
                                 className={`px-4 py-2 rounded-md text-sm font-medium transition-all duration-300 ${
                                     page === totalPages
                                         ? 'bg-gray-200 text-black cursor-not-allowed'
-                                        : 'bg-blue-500 text-white hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-400'
+                                        : 'bg-teal-500 text-white hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-400'
                                 }`}
                                 disabled={page === totalPages}
                             >
@@ -311,7 +311,7 @@ const MedicineDosesUnits = () => {
                     {showModal && (
                         <div className="fixed inset-0 bg-gray-500 bg-opacity-50 flex justify-center items-center z-50">
                             <div className="bg-white p-6 rounded-lg w-96">
-                                <h2 className="text-2xl text-blue-700 font-semibold mb-4">
+                                <h2 className="text-2xl text-teal-700 font-semibold mb-4">
                                     {editingDosesUnit ? 'Edit Doses Unit' : 'Add Doses Unit'}
                                 </h2>
                                 <div className="mb-4">
@@ -334,7 +334,7 @@ const MedicineDosesUnits = () => {
                                     </button>
                                     <button
                                         onClick={handleAddOrUpdateDosesUnit}
-                                        className="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600 focus:outline-none"
+                                        className="px-4 py-2 bg-teal-500 text-white rounded hover:bg-teal-600 focus:outline-none"
                                     >
                                         {editingDosesUnit ? 'Update' : 'Add'}
                                     </button>

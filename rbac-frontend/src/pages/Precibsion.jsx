@@ -9,6 +9,9 @@ import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css'; 
 import TestReport from "../components/TestReport";
 import Loader from "../components/Loader";
+import MedicalTemplateManage from "../components/MedicalTemplateManager";
+import ExaminationSection from "../components/ExaminationSection";
+import PatientTestList from "../components/PatientTestList";
 
 
 const useDebounce = (callback, delay) => {
@@ -476,11 +479,11 @@ const fetchTests = async () => {
     setLoading(true);
     try {
       const result = await fetchData({
-        API_URL: "templates/fetch_templates.php",
+        API_URL: `templates/fetch_templates.php?af_id=${appointment_details.af_id}`,
       });
 
-      if (result.error) {
-        setError(result.error);
+      if (result.error || !result.success) {
+        setError("Something went wrong");
       } else {
         setTemplates(result.templates);
       }
@@ -574,9 +577,9 @@ const fetchTests = async () => {
         API_URL: `Patient/fetch_patient_appointment.php?af_id=${appointment_details.af_id}`,
       });
 
-      if (result.error) {
-        setError(result.error);
-      } else {
+      if (result.error || !result.success) {
+        setError("Something went wrong.");
+      }else {
         setSelectedFoodEatInst(result.appointment.eating_instruction)
         setSelectedNextMeetDate(result.appointment.next_appointment_date)
         setSelectedNextSuggestion(result.appointment.next_meeting)
@@ -1243,8 +1246,7 @@ const handleDoseValue = async(pc_id, dose) => {
         alert("Failed to copy template");
       } else {
         alert("Template Data Copied");
-        fetchPatientComplaintList();
-        fetchPatientTestList();
+        window.location.reload();
       }
     } catch (err) {
       console.log(err);
@@ -1295,15 +1297,7 @@ const handleDoseValue = async(pc_id, dose) => {
         
           <main className="flex-1 p-5">
             <div className="mb-5 space-y-4 md:space-y-0 md:space-x-2 flex gap-2 flex-wrap justify-center">
-              {templates.map((template) => (
-                <button
-                  key={template.t_id}
-                  onClick={() => handleTemplate(template)}
-                  className="px-6 py-3 bg-blue-500 text-white rounded-lg shadow-lg hover:bg-blue-600 focus:outline-none focus:ring-4 focus:ring-blue-300 transform hover:scale-105 transition-all duration-300 ease-in-out"
-                >
-                  {template.name}
-                </button>
-              ))}
+              {templates && templates.length > 0 && <MedicalTemplateManage allTemplates={templates} handleTemplate={handleTemplate} />}
             </div>
 
             {
@@ -1315,56 +1309,7 @@ const handleDoseValue = async(pc_id, dose) => {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 p-4">
               {/* Examination Section */}
-              <div className="p-5 rounded shadow border flex flex-col">
-                <h3 className="text-lg font-semibold mb-4 text-center">Examination</h3>
-                <div className="space-y-4">
-                    {examinations.map((examination) => (
-                    <div key={examination.e_id} className="flex flex-col space-y-2">
-                        <h4 className="font-medium">{examination.examination_name}</h4>
-                        <select 
-                          value={examination.selected_option} 
-                          onChange={async(e) => {
-                              const selectedOption = e.target.value;
-                              let selectedOptionEOId = examination.options.find(option => option.name === selectedOption)?.eo_id;
-                              
-                              if(!selectedOptionEOId) selectedOptionEOId = '#'
-
-                              const data =  {
-                                  'pe_id': examination.pe_id,
-                                  'eo_id': selectedOptionEOId,  
-                                  'examination_option': selectedOption,
-                                  'af_id': appointment_details.af_id,
-                                  'e_id': examination.e_id,
-                                  'examination_name': examination.examination_name
-                              }
-
-                              const response = await fetch(`${process.env.REACT_APP_API_URL}/Patient/update_patient_exam_option.php`, {
-                                  method: 'POST', 
-                                  headers: {
-                                      'Content-Type': 'application/json',
-                                  },
-                                  body: JSON.stringify(data), 
-                              });
-
-                              const result = await response.json();
-
-                              if (result.success) {
-                                  fetchExaminations();
-                              } else {
-                                  throw new Error(result.error || 'Unknown error occurred');
-                              }
-                          }} 
-                          className="p-2 border rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-                          >
-                          <option>Not Selected</option>
-                          {examination.options.map((option) => (
-                              <option key={option.eo_id} value={option.name}>{option.name}</option>
-                          ))}
-                        </select>
-                    </div>
-                    ))}
-                </div>
-                </div>
+              <ExaminationSection examinations={examinations} fetchExaminations={fetchExaminations} appointment_details={appointment_details} />
 
 
               {/* Patient Details Section */}
@@ -1377,7 +1322,7 @@ const handleDoseValue = async(pc_id, dose) => {
                 <div className="space-y-1">
                   <div className="flex flex-col">
                     <form onSubmit={handleFormSubmit} className="w-full p-4 mx-auto bg-white rounded-lg">
-                      <h2 className="text-2xl font-semibold text-center text-indigo-600 mb-6">Add Patient Complaint</h2>
+                      <h2 className="text-2xl font-semibold text-center text-teal-600 mb-6">Add Patient Complaint</h2>
 
                       <div className="mb-4 relative">
                         <label htmlFor="name" className="block text-sm font-medium text-gray-700">Complaint</label>
@@ -1385,7 +1330,7 @@ const handleDoseValue = async(pc_id, dose) => {
                           autoComplete="off"
                           type="text"
                           id="name"
-                          className="w-full p-4 mt-2 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                          className="w-full p-4 mt-2 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                           placeholder="Enter your complaint"
                           value={complaint}
                           onChange={(e) => {
@@ -1400,7 +1345,7 @@ const handleDoseValue = async(pc_id, dose) => {
                                 {filteredHints?.map((hint, index) => (
                                   <li
                                     key={index}
-                                    className="px-4 py-3 cursor-pointer hover:bg-indigo-100 transition-all ease-in-out"
+                                    className="px-4 py-3 cursor-pointer hover:bg-teal-100 transition-all ease-in-out"
                                     onClick={() => handleHintSelect(hint)} // Use the new handler to select hint
                                   >
                                     <span className="font-medium text-gray-800">{hint.name || 'No hint'}</span>
@@ -1421,7 +1366,7 @@ const handleDoseValue = async(pc_id, dose) => {
                           autoComplete="off"
                           type="text"
                           id="duration"
-                          className="w-full p-4 mt-2 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                          className="w-full p-4 mt-2 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                           placeholder="Enter duration"
                           value={duration}
                           onChange={(e) => setDuration(e.target.value)}
@@ -1432,7 +1377,7 @@ const handleDoseValue = async(pc_id, dose) => {
                       <div className="flex justify-center">
                         <button
                           type="submit"
-                          className="w-full sm:w-auto px-6 py-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                          className="w-full sm:w-auto px-6 py-3 bg-teal-500 text-white rounded-md hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500"
                           disabled={addComplaintLoading}
                         >
                           {addComplaintLoading ? 'Adding...' : 'Add'}
@@ -1452,7 +1397,7 @@ const handleDoseValue = async(pc_id, dose) => {
                 <h3 className="text-lg font-semibold mb-4 text-center">Diagnosis</h3>
                 <textarea
                   placeholder="Type details here..."
-                  className="p-4 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 resize-none"
+                  className="p-4 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 resize-none"
                   rows="6"
                   onChange={async(e) => {
                     setDiagnosis(e.target.value); // Update state immediately
@@ -1496,7 +1441,7 @@ const handleDoseValue = async(pc_id, dose) => {
                           <td className="border border-gray-300 px-4 py-2">{complaint.hints_name}</td>
                           <td className="border border-gray-300 px-4 py-2">
                             <select
-                              className="w-full border border-gray-300 rounded px-3 py-2 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:cursor-pointer"
+                              className="w-full border border-gray-300 rounded px-3 py-2 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 hover:cursor-pointer"
                               value={inputValues[complaint.pc_id]?.type || "Not Selected"}
                               onChange={(e) => {
                                 const newValue = e.target.value === "Not Selected" ? "" : e.target.value;
@@ -1516,7 +1461,7 @@ const handleDoseValue = async(pc_id, dose) => {
                               <textarea
                                 autoComplete="off"
                                 type="text"
-                                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-800 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition-all duration-200 ease-in-out"
+                                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-800 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 shadow-sm transition-all duration-200 ease-in-out"
                                 value={inputValues[complaint.pc_id]?.medicine_name || ""}
                                 placeholder="Enter Medicine Name"
                                 onChange={(e) => handleMedicineInputChange(e, complaint.pc_id, "medicine_name")}
@@ -1560,7 +1505,7 @@ const handleDoseValue = async(pc_id, dose) => {
                                 handleDoseValue(complaint.pc_id, e.target.value)
                               }}
                               placeholder="Dose"
-                              className="w-full border border-gray-300 rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                              className="w-full border border-gray-300 rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                             />
                           </td>
                           {/* <td className="border border-gray-300 px-4 py-2">
@@ -1570,14 +1515,14 @@ const handleDoseValue = async(pc_id, dose) => {
                               value={inputValues[complaint.pc_id].custom_dose || ""}
                               onChange={(e) => handleCustomDose(e, complaint.pc_id)}
                               placeholder="Custom Dose"
-                              className="w-full border border-gray-300 rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500"
+                              className="w-full border border-gray-300 rounded px-3 py-1 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                             />
                           </td> */}
                           <td className="border border-gray-300 px-4 py-2">
                             <div className="relative">
                               <textarea
                                 type="text"
-                                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-800 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition-all duration-200 ease-in-out"
+                                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-800 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 shadow-sm transition-all duration-200 ease-in-out"
                                 value={inputValues[complaint.pc_id]?.medicine_eating || ""}
                                 onChange={(e) => handleMedicineInputChange(e, complaint.pc_id, "medicine_eating")}
                                 placeholder="Enter Eating Instructions"
@@ -1608,7 +1553,7 @@ const handleDoseValue = async(pc_id, dose) => {
                             <input
                               autoComplete="off"
                               type="number"
-                              className="w-full border border-gray-300 rounded px-3 py-2 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 hover:cursor-pointer"
+                              className="w-full border border-gray-300 rounded px-3 py-2 text-gray-700 bg-white focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 hover:cursor-pointer"
                               value={debouncedDurationValues[complaint.pc_id] || ''}
                               placeholder="Duration"
                               onChange={(e) => handleDurationAndDoseInputChange(e, complaint.pc_id, "duration")}
@@ -1669,7 +1614,7 @@ const handleDoseValue = async(pc_id, dose) => {
                                     throw new Error(result.error || 'Unknown error occurred');
                                   }
                               }} 
-                                className="p-3 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-gray-50 hover:bg-white transition duration-200"
+                                className="p-3 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 bg-gray-50 hover:bg-white transition duration-200"
                             >
                                 {suggestions.map((suggestion) => (
                                     <option key={suggestion.ns_id} value={suggestion.name}>
@@ -1716,7 +1661,7 @@ const handleDoseValue = async(pc_id, dose) => {
                                   }
                               }} 
                             value={selectedNextMeetDate}
-                            className="p-3 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-gray-50 hover:bg-white transition duration-200"
+                            className="p-3 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 bg-gray-50 hover:bg-white transition duration-200"
                         />
                         </div>
 
@@ -1731,7 +1676,7 @@ const handleDoseValue = async(pc_id, dose) => {
                             <select
                                 name="foodInstruction"
                                 id="foodInstruction"
-                                className="p-3 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 bg-gray-50 hover:bg-white transition duration-200"
+                                className="p-3 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500 bg-gray-50 hover:bg-white transition duration-200"
                                 value={selectedFoodEatInst}
                                 onChange={async(e) => {
                                   setSelectedFoodEatInst(e.target.value);
@@ -1774,7 +1719,7 @@ const handleDoseValue = async(pc_id, dose) => {
                           <div className="space-y-1">
                             <div className="flex flex-col">
                               <form onSubmit={handleTestSubmit} className="w-full mx-auto p-6 bg-white rounded-lg">
-                                <h2 className="text-2xl font-semibold text-center text-indigo-600 mb-6">Add Test</h2>
+                                <h2 className="text-2xl font-semibold text-center text-teal-600 mb-6">Add Test</h2>
 
                                 {/* Test Input */}
                                 <div className="mb-4">
@@ -1783,7 +1728,7 @@ const handleDoseValue = async(pc_id, dose) => {
                                     autoComplete="off"
                                     type="text"
                                     id="test"
-                                    className="w-full p-4 mt-2 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
+                                    className="w-full p-4 mt-2 rounded-md border border-gray-300 shadow-sm focus:outline-none focus:ring-2 focus:ring-teal-500 focus:border-teal-500"
                                     placeholder="Enter test name"
                                     value={testName}
                                     onChange={(e) => setTestName(e.target.value)}
@@ -1817,7 +1762,7 @@ const handleDoseValue = async(pc_id, dose) => {
                                 <div className="flex justify-center">
                                   <button
                                     type="submit"
-                                    className="w-full sm:w-auto px-6 py-3 bg-blue-500 text-white rounded-md hover:bg-blue-600 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                                    className="w-full sm:w-auto px-6 py-3 bg-teal-500 text-white rounded-md hover:bg-teal-600 focus:outline-none focus:ring-2 focus:ring-teal-500"
                                     disabled={addTestLoading}
                                   >
                                     {addTestLoading ? 'Adding...' : 'Add'}
@@ -1842,79 +1787,12 @@ const handleDoseValue = async(pc_id, dose) => {
                             onClick={() =>
                               navigate("/admin/doctor_panel/report", { state: { af_id: appointment_details.af_id, date: appointment_details.date } })
                             }
-                            className="mt-2 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
+                            className="mt-2 px-4 py-2 bg-teal-500 text-white rounded-md hover:bg-teal-600"
                           >View Reports</button>
                         </div> */}
                         </div>
 
-                        <div className="p-6 mt-6 rounded-lg shadow-md border border-gray-300 bg-white">
-                          <h3 className="text-lg font-semibold mb-4 text-center">Patient Test List</h3>
-                          <div className="overflow-x-auto">
-                            <table className="w-full table-auto border-collapse border border-gray-300">
-                              <thead className="bg-gray-200">
-                                <tr>
-                                  <th className="border border-gray-300 px-4 py-2">S.no.</th>
-                                  <th className="border border-gray-300 px-4 py-2">Test Name</th>
-                                  <th className="border border-gray-300 px-4 py-2">Actions</th>
-                                </tr>
-                              </thead>
-                              <tbody>
-                                {patientTestList.length === 0 ? (
-                                  <tr>
-                                    <td colSpan="3" className="text-center py-4 text-gray-500">
-                                      No tests added
-                                    </td>
-                                  </tr>
-                                ) : (
-                                  patientTestList.map((test, index) => (
-                                    <tr
-                                      key={test.pt_id}
-                                      className="transition-all duration-300 ease-in-out hover:bg-gray-100"
-                                    >
-                                      <td className="border border-gray-300 px-4 py-2 text-center">
-                                        {index + 1}
-                                      </td>
-                                      <td className="border border-gray-300 px-4 py-2 relative">
-                                        <input
-                                          autoComplete="off"
-                                          type="text"
-                                          className="w-full border border-gray-300 rounded-lg px-3 py-2 text-gray-800 bg-gray-50 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 shadow-sm transition-all duration-200 ease-in-out"
-                                          value={testInputValues[test.pt_id]?.test_name || ""}
-                                          placeholder="Enter Test Name"
-                                          onChange={(e) => handleTestInputChange(e, test.pt_id, "test_name")}
-                                        />
-                                        
-                                        {/* Dropdown for filtered test suggestions */}
-                                        {filteredTestsMap[test.pt_id] && filteredTestsMap[test.pt_id].length > 0 && test.pt_id && (
-                                          <ul className="absolute w-full bg-white border border-gray-300 rounded-md shadow-lg mt-1 max-h-40 overflow-y-auto z-10">
-                                            {filteredTestsMap[test.pt_id].map((testSuggestion) => (
-                                              <li
-                                                key={testSuggestion.test_id}
-                                                className="px-3 py-2 text-gray-800 cursor-pointer hover:bg-gray-200 focus:bg-gray-200 rounded-md transition-all duration-200 ease-in-out"
-                                                onClick={() => handlePatientHandleSelect(testSuggestion, test.pt_id)}
-                                              >
-                                                {testSuggestion.test_name}
-                                              </li>
-                                            ))}
-                                          </ul>
-                                        )}
-                                      </td>
-
-                                      <td className="border border-gray-300 px-4 py-2 text-center">
-                                        <button
-                                          onClick={() => handleDeleteTest(test.pt_id)}
-                                          className="ml-2 px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600 transition-colors duration-300 ease-in-out"
-                                        >
-                                          Delete
-                                        </button>
-                                      </td>
-                                    </tr>
-                                  ))
-                                )}
-                              </tbody>
-                            </table>
-                          </div>
-                        </div>
+                        <PatientTestList patientTestList={patientTestList} handleTestInputChange={handleTestInputChange}  handleDeleteTest={handleDeleteTest} handlePatientHandleSelect={handlePatientHandleSelect} filteredTestsMap={filteredTestsMap} testInputValues={testInputValues}/>
    
           </main>
         </div>

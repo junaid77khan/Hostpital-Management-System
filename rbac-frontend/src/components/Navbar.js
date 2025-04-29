@@ -1,11 +1,10 @@
-
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useEffect } from 'react';
-import { FaHospital } from 'react-icons/fa';
+import { FaHospital, FaUserMd, FaSignOutAlt, FaBars, FaTimes } from 'react-icons/fa';
 
 const Navbar = () => {
     const navigate = useNavigate();
+    const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
     useEffect(() => {
         const checkAuth = () => {
@@ -13,9 +12,9 @@ const Navbar = () => {
             const expiration = localStorage.getItem('auth_expiration');
             
             if (!token || Date.now() > Number(expiration)) {
-                localStorage.removeItem('auth_token'); // Clear token if expired
-                localStorage.removeItem('auth_expiration'); // Clear expiration time
-                navigate('/login'); // Redirect to login page
+                localStorage.removeItem('auth_token');
+                localStorage.removeItem('auth_expiration');
+                navigate('/login');
             }
         };
 
@@ -27,7 +26,7 @@ const Navbar = () => {
 
         // Cleanup the interval on unmount
         return () => clearInterval(interval);
-    }, []);
+    }, [navigate]);
 
     const handleLogout = () => {
         localStorage.removeItem('auth_expiration');
@@ -36,21 +35,62 @@ const Navbar = () => {
     };
 
     return (
-        <nav className="bg-gradient-to-b from-blue-700 to-blue-900 p-4 flex justify-between items-center shadow-lg">
-            <h1 className="text-white text-2xl font-semibold tracking-wider text-center w-full 
-                lg:text-2xl lg:block sm:text-xl sm:pt-6 sm:px-4">
-                <span className="inline-flex items-center">
-                    <FaHospital className="p-2 rounded-full" size={50} color="white" />
-                    <span className="ml-2 text-xl">{process.env.REACT_APP_HOSPITAL_NAME}</span>
-                </span>
-            </h1>
+        <nav className="bg-gradient-to-r from-teal-600 to-teal-800 shadow-lg">
+            <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                <div className="flex items-center justify-between h-16">
+                    {/* Logo and Hospital Name - Always visible */}
+                    <div className="flex items-center">
+                        <div className="flex-shrink-0 flex items-center">
+                            <FaHospital className="text-white" size={28} />
+                            <span className="ml-2 text-white font-semibold text-lg md:text-xl">
+                                {process.env.REACT_APP_HOSPITAL_NAME || "Medical Center"}
+                            </span>
+                        </div>
+                    </div>
 
-            <button
-                onClick={handleLogout}
-                className="bg-green-600 text-white px-6 py-2 rounded-lg shadow-md hover:bg-green-700 transition-colors duration-300 focus:outline-none"
-            >
-                Logout
-            </button>
+                    {/* Desktop menu - Hidden on mobile */}
+                    <div className="hidden md:block">
+                        <div className="flex items-center space-x-4">
+                            <button
+                                onClick={handleLogout}
+                                className="bg-white text-teal-800 px-4 py-2 rounded-md font-medium hover:bg-teal-50 transition duration-300 flex items-center"
+                            >
+                                <FaSignOutAlt className="mr-2" />
+                                Logout
+                            </button>
+                        </div>
+                    </div>
+
+                    {/* Mobile menu button */}
+                    <div className="md:hidden flex items-center">
+                        <button
+                            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+                            className="text-white hover:text-teal-200 focus:outline-none"
+                        >
+                            {mobileMenuOpen ? (
+                                <FaTimes size={24} />
+                            ) : (
+                                <FaBars size={24} />
+                            )}
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            {/* Mobile menu, show/hide based on state */}
+            {mobileMenuOpen && (
+                <div className="md:hidden bg-teal-700 shadow-inner">
+                    <div className="px-2 pt-2 pb-3 space-y-1 sm:px-3">
+                        <button
+                            onClick={handleLogout}
+                            className="w-full text-left bg-white text-teal-800 block px-3 py-2 rounded-md text-base font-medium hover:bg-teal-50 flex items-center"
+                        >
+                            <FaSignOutAlt className="mr-2" />
+                            Logout
+                        </button>
+                    </div>
+                </div>
+            )}
         </nav>
     );
 };

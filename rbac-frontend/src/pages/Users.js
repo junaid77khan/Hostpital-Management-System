@@ -124,7 +124,7 @@ const Users = () => {
                                     value={form.name}
                                     onChange={handleChange}
                                     required
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-indigo-300 focus:border-indigo-500"
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-teal-300 focus:border-teal-500"
                                 />
                             </div>
                             <div>
@@ -135,7 +135,7 @@ const Users = () => {
                                     value={form.email}
                                     onChange={handleChange}
                                     required
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-indigo-300 focus:border-indigo-500"
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-teal-300 focus:border-teal-500"
                                 />
                             </div>
                             {!editing && (
@@ -147,7 +147,7 @@ const Users = () => {
                                         value={form.password}
                                         onChange={handleChange}
                                         required
-                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-indigo-300 focus:border-indigo-500"
+                                        className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-teal-300 focus:border-teal-500"
                                     />
                                 </div>
                             )}
@@ -158,7 +158,7 @@ const Users = () => {
                                     value={form.role}
                                     onChange={handleChange}
                                     required
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-indigo-300 focus:border-indigo-500"
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-teal-300 focus:border-teal-500"
                                 >
                                     <option value="">Select Role</option>
                                     {roles.map((role) => (
@@ -173,7 +173,7 @@ const Users = () => {
                                     value={form.status}
                                     onChange={handleChange}
                                     required
-                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-indigo-300 focus:border-indigo-500"
+                                    className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring focus:ring-teal-300 focus:border-teal-500"
                                 >
                                     <option value="Active">Active</option>
                                     <option value="Inactive">Inactive</option>
@@ -208,7 +208,7 @@ const Users = () => {
                             </div>
                         ) : (
                             <table className="w-full table-auto bg-white shadow rounded-lg overflow-hidden">
-                                <thead className="bg-indigo-600 text-white">
+                                <thead className="bg-teal-600 text-white">
                                     <tr>
                                         <th className="px-4 py-3 text-left">Name</th>
                                         <th className="px-4 py-3 text-left">Email</th>
