@@ -1,6 +1,8 @@
-# Hospital Management System
+# 🏥 Hospital Management System
 
-This is a **Hospital Management System** application built with a **PHP** backend and a **React** frontend. The system allows managing patients, doctors, and appointments while maintaining detailed records. It can handle online as well as offline appointments.
+A comprehensive **Hospital Management System** built with a **React** frontend and a **PHP** backend. This system streamlines hospital operations by managing patient data, appointments, prescriptions, and more — supporting both **online** and **offline** appointment scheduling.
+
+---
 
 ## Hospital Website Link
 Visit our live hospital management system to book appointments with doctors, view available services, and more:
@@ -11,74 +13,77 @@ https://santhospital.com
 ## Table of Contents
 - [Features](#features)
 - [Images](#images)
-- [Installation](#installation)
 - [Usage](#usage)
 - [Technologies Used](#technologies-used)
 - [License](#license)
 
-## Features
-- **Patient Management**: Add, update, and delete patient records.
-- **Doctor Management**: Assign and manage doctor profiles and specializations.
-- **Appointment Scheduling**: Create, view, and manage patient appointments with doctors.
+## 🚀 Features
+
+- 🔐 **Patient Record Management**  
+  Securely store and manage detailed patient information with ease.
+
+- 📅 **Appointment Scheduling**  
+  Book appointments online through the website or offline directly from the hospital reception.
+
+- 💊 **Symptom-Based Medicine Templates**  
+  Quickly prescribe treatments using predefined medicine templates based on common symptoms.
+
+- 🧾 **Medicine & Type Management**  
+  Maintain a structured database of medicines, categorized by type for better organization.
+
+- 💡 **Diagnostic Hints**  
+  Provides symptom-based suggestions to assist doctors with faster and more accurate diagnoses.
+
+- 📄 **Automatic Report Generation**  
+  Patient reports are generated automatically, reducing manual workload.
+
+- ⚖️ **BMI Calculator**  
+  Integrated BMI calculator for basic health metrics.
+
+- 🗃️ **Complete Record History**  
+  Maintains detailed logs of all appointments, diagnoses, and prescriptions.
+
+---
 
 ## Images
 
-![image](https://github.com/user-attachments/assets/e27b57ab-3c76-4b73-957d-a4ef66c16db3)
+![image](https://github.com/user-attachments/assets/ce006963-6039-4db2-806a-f714db12ccf4)
 
-![image](https://github.com/user-attachments/assets/df354797-6c02-456a-ae63-c935a182bfba)
+![image](https://github.com/user-attachments/assets/15e122cd-7c8a-484e-a43a-22fe1159164c)
 
-![image](https://github.com/user-attachments/assets/da4ef61b-f2ac-4f99-b494-6d1bb64124e9)
+![image](https://github.com/user-attachments/assets/ddba70a5-1f03-4d67-b006-c29fad64266b)
 
-![image](https://github.com/user-attachments/assets/7ef28783-2be8-482a-90dc-c2a9c8949a3e)
+![image](https://github.com/user-attachments/assets/ba92d88f-0713-48c5-bac0-66cb4e83017d)
 
-![image](https://github.com/user-attachments/assets/18987405-7e0d-436a-a2d3-67f41bc78c7e)
+![image](https://github.com/user-attachments/assets/6664f4c7-a696-4d82-a36c-7320b6a2509f)
 
-![image](https://github.com/user-attachments/assets/8b8d88a1-8f5c-4818-a6e7-82bf0c5eec54)
+![image](https://github.com/user-attachments/assets/fa1427d5-cab9-4dbc-a71c-1fa4e98e3934)
 
-## Installation
+![image](https://github.com/user-attachments/assets/eedbd8e7-22ed-4fb0-b047-23036a5ce9c2)
 
-1. Clone the repository:
-   ```bash
-   git clone https://github.com/junaid77khan/Hostpital-Management-System.git
-   ```
-2. Navigate to rbac-frontend folder:
-   ```bash
-    cd rbac-frontend
-    ```
-3. Install dependencies:
-    ```bash
-    npm install
-    ```
+![image](https://github.com/user-attachments/assets/b5510cb7-1178-4859-baf2-1a84cafba2ea)
 
-4. Set up environment variables:
+![image](https://github.com/user-attachments/assets/8a131002-95b8-4a8a-b764-e9cafefc1d67)
 
-   Create a .env file in the root of the project and add the following:
-   ```bash
-   REACT_APP_API_URL=(API for handling patients, appointments and all other things)
-   REACT_APP_HOSPITAL_NAME=YOUR_HOSPITAL_NAME
-   ```
+![image](https://github.com/user-attachments/assets/938260a5-fc3d-469f-8c1b-d3544f9db626)
 
-5. Start the Frontend:
+![image](https://github.com/user-attachments/assets/c9dd99d8-4ac7-4825-80fb-433eaedddfd5)
 
-   You can start the server using:
-    ```bash
-    npm run start
-    ```
-
-This will run the frontend on http://localhost:3000.
-
-## Usage
-Once the frontend are up and running, navigate to http://localhost:3000 to access the Hospital Management System.
+---
 
 ### Technologies Used
 #### Backend:
-- PHP with SQL Server
+- PHP with MYSQL Server
 
 #### Frontend:
 - React.js
 - Fetch for API requests
 - Tailwind CSS for custom styling
 - React Router for navigation
+
+#### In this way many technologies are used according to requirement.
+
+---
 
 ## License
 This project is licensed under the ISC License.
